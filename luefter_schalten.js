@@ -49,14 +49,14 @@ if(bat_i < bat_schwelle)
 {
  print("Batterie innen schwach");
  Shelly.call("Device.setStatus", { "id": deviceID, "led": { "mode": ledState ? "red" : "on" };
- return();
+ return;
 }
 
 if(bat_a < bat_schwelle)
 {
  print("Batterie aussen schwach");
  Shelly.call("Device.setStatus", { "id": deviceID, "led": { "mode": ledState ? "red" : "on" };
- return();
+ return;
 }
 
 }
