@@ -43,19 +43,18 @@ function schalten(taupunkt_innen,taupunkt_aussen,temperatur_innen,humidity_innen
 function anzeigen(bat_i,bat_a) {
 let bat_schwelle = 200;
 
-Shelly.call("Shelly.GetDeviceInfo", {}, function(res) { print(JSON.stringify(res)); let deviceId = res["device"]["id"]; print("Device ID: " + deviceId); });
- 
+
 if(bat_i < bat_schwelle)
 {
  print("Batterie innen schwach");
- Shelly.call("Device.setStatus", { "id": deviceID, "led": { "mode": ledState ? "red" : "on" };
+ Shelly.call("Device.setStatus", { "id": 0, "led": { "mode": ledState ? "red" : "on" };
  return;
 }
 
 if(bat_a < bat_schwelle)
 {
  print("Batterie aussen schwach");
- Shelly.call("Device.setStatus", { "id": deviceID, "led": { "mode": ledState ? "red" : "on" };
+ Shelly.call("Device.setStatus", { "id": 0, "led": { "mode": ledState ? "red" : "on" };
  return;
 }
 
