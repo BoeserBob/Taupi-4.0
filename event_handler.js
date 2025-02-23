@@ -18,13 +18,11 @@
 // er schaltet den Lüfter
 //
 //////// Hier musst du die Adresse der H&T Blu Sensoren eingeben ///
-// Sensoren anhand der MAC Adresse
 const sensor_aussen = "7c:c6:b6:7f:9a:50"; const sensor_innen = "7c:c6:b6:72:8c:29"; const sensor_innen2 = "7c:c6:b6:03:b0:7c";
-
 const korrektur_it = 0; // Korrekturwert Innensensor Temperatur const korrektur_it2 = 0; // Korrekturwert Innensensor Temperatur const korrektur_at = 0; // Korrekturwert Außensensor Temperatur const korrektur_ih = 0; // Korrekturwert Innensensor Luftfeuchtigkeit const korrektur_ih2 = 0; // Korrekturwert Innensensor Luftfeuchtigkeit const korrektur_ah = 0; // Korrekturwert Außensensor Luftfeuchtigkeit
-
 const af_min = 3.0;
-const tempI_min = 10.0; // Minimale Innentemperatur, bei der die Lüftung aktiviert wird const tempA_min = -10.0; // Minimale Außentemperatur, bei der die Lüftung aktiviert wird const minHumiKeller = 50; ////////////////////////////////unterhalb nichts mehr ändern/////////////////////
+
+////////////////////////////// unterhalb nichts mehr ändern/////////////////////
 
 let taupunkt_aussen = 99;
 let taupunkt_innen = 99;
@@ -221,6 +219,13 @@ function berechneAF(t, r) {
 }
 
 function schalten2() {
+/////////////////////////////////////////////// Schaltkonstanten ////////////////////////////////////////////////////////////
+const af_min = 3.0;
+const tempI_min = 10.0; // Minimale Innentemperatur, bei der die Lüftung aktiviert wird 
+const tempA_min = -10.0; // Minimale Außentemperatur, bei der die Lüftung aktiviert wird 
+const minHumiKeller = 50; // 
+/////////////////////////////////////////////// Schaltkonstanten ////////////////////////////////////////////////////////////
+
     rel = false;
     // wenn Absolute Feuchtigkeit einen Unterschied von X hat
     if (af_innen - af_min > af_aussen || af_innen2 - af_min > af_aussen) {
