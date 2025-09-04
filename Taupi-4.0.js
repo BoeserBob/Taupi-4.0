@@ -66,14 +66,15 @@ function schalten() {
   lost_connection_innen = lost_connection_innen + schaltzeit
   lost_connection_aussen = lost_connection_aussen + schaltzeit
   print("letzte Verbindung zum Sensor innen vor " ,lost_connection_innen, " Sekunden "  );
-  print("letzte Verbindung zum Sensor außen vor " ,lost_connection_innen, " Sekunden "  );
+  print("letzte Verbindung zum Sensor außen vor " ,lost_connection_aussen, " Sekunden "  );
   
   if (lost_connection_innen > lost_connection ||
    lost_connection_aussen > lost_connection )
   {
-    print("Verbindung zu Sensoren zu lange verloren.");
+    print("Verbindung zu Sensoren zu lange verloren, Lüfter ausschalten.");
     Shelly.call("Switch.Set", { id: 0, on: false });  
-    farbring(100,0,0,100);
+    farbring(80,80,80,100);
+    return;
    }
   
   
