@@ -72,7 +72,7 @@ if (battery_innen < battery_warngrenze ||
     if ( temperatur_innen > mindesttemperatur &&
       humidity_innen > mindesthumi &&
       taupunkt_innen > taupunkt_aussen + taupunktschwelle
-    );
+    )
   {
     print("Lüfter einschalten");
     Shelly.call("Switch.Set", { id: 0, on: true });
