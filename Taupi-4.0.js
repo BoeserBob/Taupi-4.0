@@ -24,6 +24,7 @@ var mindesttemperatur  = 10;                 // [°C] ...und Tinnen > mindesttem
 var mindesthumi        = 50;                 // [%]  ...und RHinnen > mindesthumi
 var schaltzeit         = 6;                 // [s]  Schaltbedingung prüfen alle X Sekunden
 var battery_warngrenze = 20;                 // [%] wenn dieser Schwellwert unterschritten ist blinkt der Plug rot
+var lost_connection = 3600;                  // [s] Zeit nach der frische Sensordaten gekommen sein müssen um tote Verbindungen zu finden
 //===== Ende Sensor-Konfiguration === AB HIER MUSS NICHTS MEHR GEÄNDERT WERDEN =====================================
 
 
@@ -35,6 +36,8 @@ var humidity_innen;
 var humidity_aussen;
 var battery_innen;
 var battery_aussen;
+var lost_connection_innen;
+var lost_connection_aussen;
 
 var luefterstatus = null;  // Merkt sich letzten Schaltzustand, um unnötige Schaltvorgänge zu vermeiden
 
@@ -59,6 +62,18 @@ function schalten() {
     return;
   }
 
+// Sicherheitsprüfung kommen regelmäßig frische Daten von den Sensoren?
+  lost_connection_innen = lost_connection_innen - 1
+  lost_connection_aussen = lost_connection_aussen - 1
+
+  if (lost_connection_innen < 0 ||
+   lost_connection_aussen < 0 )
+  {
+    print("keine Verbindung zum Sensor seit mindestens" , lost_connection, " Sekunden "  );
+    farbring(100,0,0,100);
+   }
+  
+  
 // Visualisierung Batteriefüllstand durch roten Blink
 if (battery_innen < battery_warngrenze ||
    battery_aussen < battery_warngrenze)
@@ -108,12 +123,14 @@ function checkBlu(event) {
     humidity_aussen   = event.humidity;
     taupunkt_aussen   = taupunkt(event.temperature, event.humidity);
     battery_aussen     =  event.battery;
+    lost_connection_innen = lost_connection / schaltzeit
     print("Neue Werte für Außen:", temperatur_aussen, "°C,", humidity_aussen, "%, Tp:", taupunkt_aussen, "°C, Batt: ", battery_aussen, " % ");
   } else if (event.address === sensor_innen) {
     temperatur_innen = event.temperature;
     humidity_innen   = event.humidity;
     taupunkt_innen   = taupunkt(event.temperature, event.humidity);
     battery_innen     =  event.battery;
+    lost_connection_aussen = lost_connection / schaltzeit
     print("Neue Werte für Innen:", temperatur_innen, "°C,", humidity_innen, "%, Tp:", taupunkt_innen, "°C, Batt: " , battery_innen, " % ");
   }
 }
@@ -121,8 +138,8 @@ function checkBlu(event) {
 // Haupt-Timer für Steuerlogik
 Timer.set(schaltzeit * 1000, true, function () {
   print("----- Steuerung alle", schaltzeit, "s -----");
-  print("Innen: T =", temperatur_innen, "°C, RH =", humidity_innen, "%, Tp =", taupunkt_innen);
-  print("Außen: T =", temperatur_aussen, "°C, RH =", humidity_aussen, "%, Tp =", taupunkt_aussen);
+  print("Innen: T =", temperatur_innen, "°C, RH =", humidity_innen, "%, Tp =", taupunkt_innen, "Batterie: ", battery_innen " % ");
+  print("Außen: T =", temperatur_aussen, "°C, RH =", humidity_aussen, "%, Tp =", taupunkt_aussen, "Batterie: ", battery_aussen " % "));
   schalten();
 });
 
