@@ -13,7 +13,7 @@
 // 
 // Die nachfolgenden Zeilen müssen angepasst werden, mindestens die MAC-Adressen für "sensor_aussen" und "sensor_innen".
 // Die Schaltkonfiguration kann bei Bedarf angepasst werden.
-// 
+//
 
 //========== Sensor-Konfiguration ==========
 var sensor_aussen = "7c:c6:b6:61:e8:11";
@@ -24,7 +24,7 @@ var mindesttemperatur  = 10;                 // [°C] ...und Tinnen > mindesttem
 var mindesthumi        = 50;                 // [%]  ...und RHinnen > mindesthumi
 var schaltzeit         = 6;                 // [s]  Schaltbedingung prüfen alle X Sekunden
 var battery_warngrenze = 20;                 // [%] wenn dieser Schwellwert unterschritten ist blinkt der Plug rot
-var lost_connection = 3600;                  // [s] Zeit nach der frische Sensordaten gekommen sein müssen um tote Verbindungen zu finden
+var lost_connection = 600;                  // [s] Zeit nach der frische Sensordaten gekommen sein müssen um tote Verbindungen zu finden
 //===== Ende Sensor-Konfiguration === AB HIER MUSS NICHTS MEHR GEÄNDERT WERDEN =====================================
 
 
@@ -58,7 +58,7 @@ function schalten() {
       typeof humidity_innen === "undefined")
   {
     print("Nicht alle Sensorwerte vorhanden – Schaltung übersprungen.");
-    farbring(80,80,10,100);
+    farbring(80,80,0,100);
     return;
   }
 
@@ -73,7 +73,7 @@ function schalten() {
   {
     print("Verbindung zu Sensoren zu lange verloren, Lüfter ausschalten.");
     Shelly.call("Switch.Set", { id: 0, on: false });  
-    farbring(80,80,10,100);
+    farbring(80,80,0,100);
     return;
    }
   
