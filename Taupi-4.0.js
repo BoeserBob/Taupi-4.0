@@ -58,7 +58,7 @@ function schalten() {
       typeof humidity_innen === "undefined")
   {
     print("Nicht alle Sensorwerte vorhanden – Schaltung übersprungen.");
-    farbring(80,80,80,100);
+    farbring(80,80,10,100);
     return;
   }
 
@@ -73,7 +73,7 @@ function schalten() {
   {
     print("Verbindung zu Sensoren zu lange verloren, Lüfter ausschalten.");
     Shelly.call("Switch.Set", { id: 0, on: false });  
-    farbring(80,80,80,100);
+    farbring(80,80,10,100);
     return;
    }
   
