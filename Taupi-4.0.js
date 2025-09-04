@@ -23,6 +23,7 @@ var taupunktschwelle   = 2;                  // [°C] Lüfter einschalten wenn T
 var mindesttemperatur  = 10;                 // [°C] ...und Tinnen > mindesttemperatur...
 var mindesthumi        = 50;                 // [%]  ...und RHinnen > mindesthumi
 var schaltzeit         = 6;                 // [s]  Schaltbedingung prüfen alle X Sekunden
+var battery_warngrenze = 20;                 // [%] wenn dieser Schwellwert unterschritten ist blinkt der Plug rot
 //===== Ende Sensor-Konfiguration === AB HIER MUSS NICHTS MEHR GEÄNDERT WERDEN =====================================
 
 
@@ -54,31 +55,51 @@ function schalten() {
       typeof humidity_innen === "undefined")
   {
     print("Nicht alle Sensorwerte vorhanden – Schaltung übersprungen.");
+    farbring(80,80,80,100);
     return;
   }
 
-  let einschalten;
+// Visualisierung Batteriefüllstand durch roten Blink
+if (battery_innen < battery_warngrenze ||
+   battery_aussen < battery_warngrenze)
+  {
+    print("Batteriestand niedrig");
+    farbring(100,0,0,100);
+   }
 
-  if (!luefterstatus) {
-    // Lüfter ist AUS → prüfen ob einschalten
-    einschalten = (
-      temperatur_innen > mindesttemperatur &&
+ // Schaltlogik (immer schalten, der Shelly schaltet nur, wenn er schalten muss).
+  
+    if ( temperatur_innen > mindesttemperatur &&
       humidity_innen > mindesthumi &&
       taupunkt_innen > taupunkt_aussen + taupunktschwelle
     );
+  {
+    print("Lüfter einschalten");
+    Shelly.call("Switch.Set", { id: 0, on: true });
+    farbring(80,10,0,100);
+  
   } else {
-    // Lüfter ist EIN → prüfen ob ausschalten (mit Hysterese)
-    einschalten = !(taupunkt_innen < taupunkt_aussen + taupunktschwelle / 2);
+    print("Lüfter ausschalten.");
+    Shelly.call("Switch.Set", { id: 0, on: false });
+    farbring(0,0,80,100); 
   }
 
-  if (einschalten !== luefterstatus) {
-    print("Lüfter " + (einschalten ? "EIN" : "AUS"));
-    Shelly.call("Switch.Set", { id: 0, on: einschalten });
-    luefterstatus = einschalten;
-  } else {
-    print("Keine Änderung am Lüfterstatus. Lüfter ist " + (einschalten ? "EIN." : "AUS."));
-  }
 }
+
+// Farbe Farbring setzen für Standalone Betrieb.
+function farbring(red,green,blue,helligkeit) {
+    Shelly.call(
+    "PLUGS_UI.SetConfig",{ id:0, config:{"leds":{"mode":"switch","colors":
+    {"switch:0":
+    {"on":{"rgb":[red,green,blue],"brightness":helligkeit},
+    "off":{"rgb":[red,green,blue],"brightness":helligkeit}}}}}},
+    function (result, code, msg, ud) {
+    },
+    null
+    );
+
+}
+
 
 // Event-Verarbeitung
 function checkBlu(event) {
