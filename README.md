@@ -37,11 +37,11 @@ Woraus besteht das System?
   - einem Lüfter (230 V Lüfter mit Stecker, z.B. 150 mm, 15 W)
   - ein Skript, das auf der Shelly Plug S installiert werden muss
 
-# Installationsanleitung Kurzversion
-Installationsvideo: 
+# Installationsvideo:
+ 
 https://youtu.be/OwO5WBgde4s?si=qNCkJwFlZNB12Jp6
 
-Und so viel bringts:
+Und so viel bringts -> Short:
 https://youtube.com/shorts/eaow63bAOWc
 
 # Installationsanleitung Kurzversion
