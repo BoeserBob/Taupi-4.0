@@ -1,4 +1,6 @@
-Erklärung Farbcodes des Farbrings:
+
+
+# Erklärung Farbcodes des LED-Farbrings:
 
 gelb = noch keine oder verlorene Verbindung zu den Sensoren -> Sensoren näher an den Schalter bringen
 blau = Lüfter aus
