@@ -13,7 +13,7 @@
 // 
 // Die nachfolgenden Zeilen müssen angepasst werden, mindestens die MAC-Adressen für "sensor_aussen" und "sensor_innen".
 // Die Schaltkonfiguration kann bei Bedarf angepasst werden.
-//
+// 
 
 //========== Sensor-Konfiguration ==========
 var sensor_aussen = "7c:c6:b6:61:e8:11";
