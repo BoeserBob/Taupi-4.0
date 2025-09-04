@@ -71,7 +71,7 @@ function schalten() {
   if (lost_connection_innen < lost_connection ||
    lost_connection_aussen < lost_connection )
   {
-  print("Verbindung zu Sensoren zu lange verloren.";
+  print("Verbindung zu Sensoren zu lange verloren.");
     farbring(100,0,0,100);
    }
   
