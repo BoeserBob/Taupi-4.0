@@ -63,13 +63,15 @@ function schalten() {
   }
 
 // Sicherheitsprüfung kommen regelmäßig frische Daten von den Sensoren?
-  lost_connection_innen = lost_connection_innen - 1
-  lost_connection_aussen = lost_connection_aussen - 1
-
-  if (lost_connection_innen < 0 ||
-   lost_connection_aussen < 0 )
+  lost_connection_innen = lost_connection_innen + schaltzeit
+  lost_connection_aussen = lost_connection_aussen + schaltzeit
+  print("letzte Verbindung zum Sensor innen vor " ,lost connection innen, " Sekunden "  );
+  print("letzte Verbindung zum Sensor außen vor " ,lost connection innen, " Sekunden "  );
+  
+  if (lost_connection_innen < lost_connection ||
+   lost_connection_aussen < lost_connection )
   {
-    print("keine Verbindung zum Sensor seit mindestens" , lost_connection, " Sekunden "  );
+  print("Verbindung zu Sensoren zu lange verloren.";
     farbring(100,0,0,100);
    }
   
@@ -123,14 +125,14 @@ function checkBlu(event) {
     humidity_aussen   = event.humidity;
     taupunkt_aussen   = taupunkt(event.temperature, event.humidity);
     battery_aussen     =  event.battery;
-    lost_connection_innen = lost_connection / schaltzeit
+    lost_connection_innen = 0
     print("Neue Werte für Außen:", temperatur_aussen, "°C,", humidity_aussen, "%, Tp:", taupunkt_aussen, "°C, Batt: ", battery_aussen, " % ");
   } else if (event.address === sensor_innen) {
     temperatur_innen = event.temperature;
     humidity_innen   = event.humidity;
     taupunkt_innen   = taupunkt(event.temperature, event.humidity);
     battery_innen     =  event.battery;
-    lost_connection_aussen = lost_connection / schaltzeit
+    lost_connection_aussen = 0
     print("Neue Werte für Innen:", temperatur_innen, "°C,", humidity_innen, "%, Tp:", taupunkt_innen, "°C, Batt: " , battery_innen, " % ");
   }
 }
