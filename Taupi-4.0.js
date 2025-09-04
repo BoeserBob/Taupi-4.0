@@ -65,8 +65,8 @@ function schalten() {
 // Sicherheitsprüfung kommen regelmäßig frische Daten von den Sensoren?
   lost_connection_innen = lost_connection_innen + schaltzeit
   lost_connection_aussen = lost_connection_aussen + schaltzeit
-  print("letzte Verbindung zum Sensor innen vor " ,lost connection innen, " Sekunden "  );
-  print("letzte Verbindung zum Sensor außen vor " ,lost connection innen, " Sekunden "  );
+  print("letzte Verbindung zum Sensor innen vor " ,lost_connection_innen, " Sekunden "  );
+  print("letzte Verbindung zum Sensor außen vor " ,lost_connection_innen, " Sekunden "  );
   
   if (lost_connection_innen < lost_connection ||
    lost_connection_aussen < lost_connection )
