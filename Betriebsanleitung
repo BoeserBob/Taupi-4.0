@@ -1,0 +1,6 @@
+Erklärung Farbcodes des Farbrings:
+
+gelb = noch keine oder verlorene Verbindung zu den Sensoren -> Sensoren näher an den Schalter bringen
+blau = Lüfter aus
+orange = Lüfter an
+rot blinken = Batteriefüllstand der Sensoren unter der Warngrenze (20%) -> Tausch notwendig
