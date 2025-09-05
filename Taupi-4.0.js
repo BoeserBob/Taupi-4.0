@@ -127,14 +127,14 @@ function checkBlu(event) {
     humidity_aussen   = event.humidity;
     taupunkt_aussen   = taupunkt(event.temperature, event.humidity);
     battery_aussen     =  event.battery;
-    lost_connection_innen = 0
+    lost_connection_aussen = 0
     print("Neue Werte für Außen:", temperatur_aussen, "°C,", humidity_aussen, "%, Tp:", taupunkt_aussen, "°C, Batt: ", battery_aussen, " % ");
   } else if (event.address === sensor_innen) {
     temperatur_innen = event.temperature;
     humidity_innen   = event.humidity;
     taupunkt_innen   = taupunkt(event.temperature, event.humidity);
     battery_innen     =  event.battery;
-    lost_connection_aussen = 0
+    lost_connection_innen = 0
     print("Neue Werte für Innen:", temperatur_innen, "°C,", humidity_innen, "%, Tp:", taupunkt_innen, "°C, Batt: " , battery_innen, " % ");
   }
 }
