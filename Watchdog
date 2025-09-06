@@ -1,18 +1,34 @@
-// -------------- Watchdog ------------------
+// -------------- Watchdog ------------------ LÄUFT NOCH NICHT
 // 
 // Einfacher robuster Skript.  
 // Ich nehme an, dass der Watchdog immer funktioniert und nicht überwacht werden muss.
 //
 // Prüft alle 60 Sekunden, ob das Hauptscript aktiv ist
 
-Timer.set(60000, true, function() {
-  let hb = Shelly.getUserProperty("heartbeat");
-  let now = Sys.uptime();
+Timer.set(1000, true, function() {
+var heartbeat;
+var watchdog = "watchdog";
 
-  if (!hb || (now - hb > 60)) {
-    print(" Hauptscript scheint ausgefallen zu sein. Starte neu...");
-    Sys.reboot();
-  } else {
-    print(" Hauptscript läuft.");
-  }
-});
+  Shelly.call("KVS.get", 
+        { "key": watchdog },
+        function (result) {
+        heartbeat = result.value;
+        }
+    );
+
+print(heartbeat);
+
+    if (heartbeat < 0) {
+      print("Hauptscript scheint ausgefallen zu sein. Neustart...");
+ //     Sys.reboot();
+    } else {
+      print("Hauptscript läuft.");
+      heartbeat = heartbeat - 1;
+ 
+    Shelly.call("KVS.Set", {
+      "key": "watchdog" , "value": heartbeat}
+      );  
+  
+      
+    }
+  });
