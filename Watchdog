@@ -1,1 +1,18 @@
+// -------------- Watchdog ------------------
+// 
+// Einfacher robuster Skript.  
+// Ich nehme an, dass der Watchdog immer funktioniert und nicht überwacht werden muss.
+//
+// Prüft alle 60 Sekunden, ob das Hauptscript aktiv ist
 
+Timer.set(60000, true, function() {
+  let hb = Shelly.getUserProperty("heartbeat");
+  let now = Sys.uptime();
+
+  if (!hb || (now - hb > 60)) {
+    print(" Hauptscript scheint ausgefallen zu sein. Starte neu...");
+    Sys.reboot();
+  } else {
+    print(" Hauptscript läuft.");
+  }
+});
