@@ -2,7 +2,11 @@
  :-) Vereinfachte Version powered by HolzaChr -> alles in einen Script gepackt und ohne KVS! :-)
 https://github.com/holzachr
 
-Eine Taupukt-gesteuerte Zwangsbelüftung mit einem Shelly Plug S Plus als Schaltsteckdose und BLE-Gateway, sowie zwei Shelly BLU HT Sensoren.
+Eine Taupunkt-gesteuerte Zwangsbelüftung mit einem Shelly Plug S Plus als Schaltsteckdose und BLE-Gateway, sowie zwei Shelly BLU HT Sensoren.
+
+Vorab noch ein Hinweis: günstige Lüfter sind meist schlecht entstört.
+Shelly Plugs sind empfindlich gegen diese Überspannungen. 
+Verbaut deshalb eine Entstörvorrichtung, z.B. den Shelly RC-Snubber. 
 
 Getestet mit:
 - Shelly Plus Plug S, Gerätemodell SNPL-00112EU, Firmware-Version 20250730-063227/1.7.0-gbe7545d
