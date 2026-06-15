@@ -4,9 +4,8 @@ https://github.com/holzachr
 
 Eine Taupunkt-gesteuerte Zwangsbelüftung mit einem Shelly Plug S Plus als Schaltsteckdose und BLE-Gateway, sowie zwei Shelly BLU HT Sensoren.
 
-Vorab noch ein Hinweis: günstige Lüfter sind meist schlecht entstört.
-Shelly Plugs sind empfindlich gegen diese Überspannungen. 
-Verbaut deshalb eine Entstörvorrichtung, z.B. den Shelly RC-Snubber. 
+Vorab noch ein Hinweis: günstige Lüfter sind meist schlecht entstört. Shelly Plugs sind empfindlich gegen diese Überspannungen. 
+Verbaut deshalb eine Entstörvorrichtung, z.B. den Shelly RC-Snubber entweder direkt am Lüfter oder in einem separaten Schukostecker, den du einfach zusammen mit dem Lüfter in eine Dreifachsteckdose steckst.
 
 Getestet mit:
 - Shelly Plus Plug S, Gerätemodell SNPL-00112EU, Firmware-Version 20250730-063227/1.7.0-gbe7545d
@@ -57,7 +56,7 @@ https://youtube.com/shorts/eaow63bAOWc
 - Adressen der BT-Sensoren raussuchen und im Kopfteil von Taupi-4.0.js anpassen.
 - Skript auf automatischen Start stellen.
 
-Die Farbe des Shelly Farbrings zeigt den Status an (Farbcodes siehe File Bedienungsanleitung)
+Die Farbe des Shelly Farbrings zeigt den Status an (Bedeutung der Farbcodes siehe File Bedienungsanleitung)
 
 Anregungen und Korrekturen gerne, das Projekt wird sicher wachsen :-)
 
