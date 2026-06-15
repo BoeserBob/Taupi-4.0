@@ -52,10 +52,12 @@ https://youtube.com/shorts/eaow63bAOWc
 
 - Shelly Plug einrichten
 - BT-Sensoren mit Shelly Plug koppeln.
-- Firmwareupdates durchführen. 
+- Firmwareupdates durchführen.
+- Skript installieren (Taupi-4.0.js). 
 - Adressen der BT-Sensoren raussuchen und im Kopfteil von Taupi-4.0.js anpassen.
-- Skript installieren (Taupi-4.0.js).
 - Skript auf automatischen Start stellen.
+
+Die Farbe des Shelly Farbrings zeigt den Status an (Farbcodes siehe File Bedienungsanleitung)
 
 Anregungen und Korrekturen gerne, das Projekt wird sicher wachsen :-)
 
