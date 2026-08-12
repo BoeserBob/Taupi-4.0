@@ -27,26 +27,30 @@ Inspiriert durch den phänomenalen Taupunktlüfter aus der Zeitschrift MAKE 1/20
 ... habe ich als Taupi-4.0 eine idiotensichere Variante ohne Löten, ohne Kabel zu den Sensoren, ohne 230 V Basteleien zusammengestellt.
 
 Warum auf einer Shelly Plug und nicht im coolen HomeAssistant oder IOBroker oder sowas, das ist doch Steinzeit????
-
 - Damit es als Insel mit minimalem Aufwand fernab von WLANs und Routern laufen kann. 
 - Günstig, kompakt, einfach zu administrieren.
 - Und weils geht.
 
 Was ist die Aufgabe des Taupunktlüfters?
-
 - Der Taupunktlüfter soll die Luftfeuchtigkeit in einem Raum (meist Keller) durch gesteuerte Belüftung möglichst weit absenken.
 - Den Begriff Taupunkt erkläre ich nicht, die Kollegen von der MAKE erklären das Prinzip perfekt.
 
 Wie macht der Lüfter das? 
-
 - Der Taupunktlüfter lüftet nur dann, wenn die Außenluft (deutlich) weniger Wasser als die Innenluft enthält.
 
 Woraus besteht das System?
-
   - zwei kabellose Temperatur- und Feuchtigkeitssensoren Shelly BLU HT (einer für innen, einer für außen)
   - einer Shelly Plug S Plus (schaltet den Lüfter, ist die Plattform für die Skripte)
   - einem Lüfter (230 V Lüfter mit Stecker, z.B. 150 mm, 15 W)
   - ein Skript, das auf der Shelly Plug S installiert werden muss
+
+Häufige Frage: Luft in den Keller Reinblasen oder Raussaugen?
+- Das kann ich nicht pauschal sagen. Man muss sich immer Gedanken machen, wie sich die Luftströmungen einstellen. Es braucht immer eine Quelle und eine Senke. Die Luft verschwindet nicht einfach im Keller.
+- Denkbar ist es mit einem zweiten Lüfter auf der gegenüberliegenden Seite einen Zwangsstrom zu erzeugen (Steuerung ganz einfach über eine Action auf der Shelly Plug mit dem Script und einer zweiten Shelly Plug). 
+- In meinen Keller blase ich durch ein Kellerfenster ein. 
+- Ich habe eine gut dichte Tür zum Wohnbereich (wichtig, sonst drückt es die feuchte, muffige Kellerluft nach oben ...)
+- Auf der gegenüberliegenden Seite des Kellers habe ich ein Fenster gekippt, dort entwicht ein Großteil der Luft und dort befindet sich eine Gastherme.
+- Achtung: Bei einer Feuerung im Keller (Gastherme etc) würde ich nie Luft raussaugen sondern immer in den Keller einblasen und für zusätzliche Entlüftung sorgen. Wer weis, was man sonst aus der Feuerung ansaugt. Der Schornsteinfeger bekommt vermutlich trotzdem Schnappatmung und will eine Vorrangsteuerung für den Brenner ...
 
 # Installationsvideo:
  
