@@ -46,11 +46,12 @@ Woraus besteht das System?
 
 Häufige Frage: Luft in den Keller Reinblasen oder Raussaugen?
 - Das kann ich nicht pauschal sagen. Man muss sich immer Gedanken machen, wie sich die Luftströmungen einstellen. Es braucht immer eine Quelle und eine Senke. Die Luft verschwindet nicht einfach im Keller.
-- Denkbar ist es mit einem zweiten Lüfter auf der gegenüberliegenden Seite einen Zwangsstrom zu erzeugen (Steuerung ganz einfach über eine Action auf der Shelly Plug mit dem Script und einer zweiten Shelly Plug). 
+
 - In meinen Keller blase ich durch ein Kellerfenster ein. 
 - Ich habe eine gut dichte Tür zum Wohnbereich (wichtig, sonst drückt es die feuchte, muffige Kellerluft nach oben ...)
 - Auf der gegenüberliegenden Seite des Kellers habe ich ein Fenster gekippt, dort entwicht ein Großteil der Luft und dort befindet sich eine Gastherme.
-- Achtung: Bei einer Feuerung im Keller (Gastherme etc) würde ich nie Luft raussaugen sondern immer in den Keller einblasen und für zusätzliche Entlüftung sorgen. Wer weis, was man sonst aus der Feuerung ansaugt. Der Schornsteinfeger bekommt vermutlich trotzdem Schnappatmung und will eine Vorrangsteuerung für den Brenner ...
+- Für sehr große Keller kann es sinnvoll sein, mit einem zweiten Lüfterauf der gegenüberliegenden Seite einen Zwangsstrom zu erzeugen (einer bläst, einer saugt, Steuerung ganz einfach über eine Action auf der Shelly Plug mit dem Script und einer zweiten Shelly Plug für den zweiten Lüfter). 
+- Aber Achtung: Bei einer Feuerung im Keller (Gastherme etc) würde ich nie Luft raussaugen sondern immer in den Keller einblasen und für zusätzliche Entlüftung sorgen. Wer weis, was man sonst aus der Feuerung ansaugt. Der Schornsteinfeger bekommt vermutlich trotzdem Schnappatmung und will eine Vorrangsteuerung für den Brenner ...
 
 # Installationsvideo:
  
