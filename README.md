@@ -42,6 +42,7 @@ Woraus besteht das System?
   - zwei kabellose Temperatur- und Feuchtigkeitssensoren Shelly BLU HT (einer für innen, einer für außen)
   - einer Shelly Plug S Plus (schaltet den Lüfter, ist die Plattform für die Skripte)
   - einem Lüfter (230 V Lüfter mit Stecker, z.B. 150 mm, 15 W)
+  - Einer Entstörung (z.B. Shelly RC-Snubber)
   - ein Skript, das auf der Shelly Plug S installiert werden muss
 
 Häufige Frage: Luft in den Keller Reinblasen oder Raussaugen?
