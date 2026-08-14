@@ -24,9 +24,11 @@ var mindesttemperatur  = 10;                 // [°C] ...und Tinnen > mindesttem
 var mindesthumi        = 50;                 // [%]  ...und RHinnen > mindesthumi
 var schaltzeit         = 180;                // [s]  Schaltbedingung prüfen alle X Sekunden
 var battery_warngrenze = 20;                 // [%] wenn dieser Schwellwert unterschritten ist blinkt der Plug rot
-var lost_connection = 600;                   // [s] Zeit nach der frische Sensordaten gekommen sein müssen um tote Verbindungen zu finden
+var lost_connection    = 600;               // [s] Zeit (30 Min) nach der frische Sensordaten gekommen sein müssen um tote Verbindungen zu finden
+var auto_reboot_tage   = 7;                  // [Tage] Automatischer Neustart zur Speicherbereinigung
 //===== Ende Sensor-Konfiguration === AB HIER MUSS NICHTS MEHR GEÄNDERT WERDEN =====================================
 
+var reboot_limit = auto_reboot_tage * 24 * 60 * 60; // Umrechnung in Sekunden
 
 var taupunkt_aussen;
 var taupunkt_innen;
@@ -64,63 +66,53 @@ function schalten() {
     return;
   }
 
-// Sicherheitsprüfung kommen regelmäßig frische Daten von den Sensoren?
-  lost_connection_innen = lost_connection_innen + schaltzeit
-  lost_connection_aussen = lost_connection_aussen + schaltzeit
-  print("letzte Verbindung zum Sensor innen vor " ,lost_connection_innen, " Sekunden "  );
-  print("letzte Verbindung zum Sensor außen vor " ,lost_connection_aussen, " Sekunden "  );
+  // Sicherheitsprüfung: Kommen regelmäßig frische Daten von den Sensoren?
+  lost_connection_innen = lost_connection_innen + schaltzeit;
+  lost_connection_aussen = lost_connection_aussen + schaltzeit;
+  print("letzte Verbindung zum Sensor innen vor ", lost_connection_innen, " Sekunden ");
+  print("letzte Verbindung zum Sensor außen vor ", lost_connection_aussen, " Sekunden ");
   
-  if (lost_connection_innen > lost_connection ||
-   lost_connection_aussen > lost_connection )
+  if (lost_connection_innen > lost_connection || lost_connection_aussen > lost_connection)
   {
     print("Verbindung zu Sensoren zu lange verloren, Lüfter ausschalten.");
     Shelly.call("Switch.Set", { id: 0, on: false });  
     farbring(80,80,0,100);
     return;
-   }
+  }
   
-  
-// Visualisierung Batteriefüllstand durch roten Blink
-if (battery_innen < battery_warngrenze ||
-   battery_aussen < battery_warngrenze)
+  // Visualisierung Batteriefüllstand
+  if ((typeof battery_innen !== "undefined" && battery_innen < battery_warngrenze) ||
+      (typeof battery_aussen !== "undefined" && battery_aussen < battery_warngrenze))
   {
-    print("Batteriestand niedrig");
-    farbring(100,0,0,100);
-   }
+    print("WARNUNG: Batteriestand eines Sensors niedrig!");
+  }
 
- // Schaltlogik (immer schalten, der Shelly schaltet nur, wenn er schalten muss).
-  
-    if ( temperatur_innen > mindesttemperatur &&
+  // Schaltlogik
+  if (temperatur_innen > mindesttemperatur &&
       humidity_innen > mindesthumi &&
-      taupunkt_innen > taupunkt_aussen + taupunktschwelle
-    )
+      taupunkt_innen > taupunkt_aussen + taupunktschwelle)
   {
     print("Lüfter einschalten");
     Shelly.call("Switch.Set", { id: 0, on: true });
     farbring(80,10,0,100);
-  
   } else {
     print("Lüfter ausschalten.");
     Shelly.call("Switch.Set", { id: 0, on: false });
     farbring(0,0,80,100); 
   }
-
 }
 
 // Farbe Farbring setzen für Standalone Betrieb.
 function farbring(red,green,blue,helligkeit) {
-    Shelly.call(
+  Shelly.call(
     "PLUGS_UI.SetConfig",{ id:0, config:{"leds":{"mode":"switch","colors":
     {"switch:0":
     {"on":{"rgb":[red,green,blue],"brightness":helligkeit},
     "off":{"rgb":[red,green,blue],"brightness":helligkeit}}}}}},
-    function (result, code, msg, ud) {
-    },
+    function (result, code, msg, ud) {},
     null
-    );
-
+  );
 }
-
 
 // Event-Verarbeitung
 function checkBlu(event) {
@@ -128,15 +120,15 @@ function checkBlu(event) {
     temperatur_aussen = event.temperature;
     humidity_aussen   = event.humidity;
     taupunkt_aussen   = taupunkt(event.temperature, event.humidity);
-    battery_aussen     =  event.battery;
-    lost_connection_aussen = 0
+    battery_aussen    = event.battery;
+    lost_connection_aussen = 0;
     print("Neue Werte für Außen:", temperatur_aussen, "°C,", humidity_aussen, "%, Tp:", taupunkt_aussen, "°C, Batt: ", battery_aussen, " % ");
   } else if (event.address === sensor_innen) {
     temperatur_innen = event.temperature;
     humidity_innen   = event.humidity;
     taupunkt_innen   = taupunkt(event.temperature, event.humidity);
-    battery_innen     =  event.battery;
-    lost_connection_innen = 0
+    battery_innen    = event.battery;
+    lost_connection_innen = 0;
     print("Neue Werte für Innen:", temperatur_innen, "°C,", humidity_innen, "%, Tp:", taupunkt_innen, "°C, Batt: " , battery_innen, " % ");
   }
 }
@@ -146,6 +138,15 @@ Timer.set(schaltzeit * 1000, true, function () {
   print("----- Steuerung alle", schaltzeit, "s -----");
   print("Innen: T =", temperatur_innen, "°C, RH =", humidity_innen, "%, Tp =", taupunkt_innen, "Batterie: ", battery_innen, " % ");
   print("Außen: T =", temperatur_aussen, "°C, RH =", humidity_aussen, "%, Tp =", taupunkt_aussen, "Batterie: ", battery_aussen, " % ");
+  
+  // Auto-Reboot Prüfung
+  var sysStatus = Shelly.getComponentStatus("sys");
+  if (sysStatus && sysStatus.uptime > reboot_limit) {
+    print("Uptime von ", auto_reboot_tage, " Tagen erreicht. Führe automatischen Neustart durch...");
+    Shelly.call("Shelly.Reboot");
+    return;
+  }
+
   schalten();
 });
 
@@ -191,7 +192,6 @@ function getByteSize(type) {
   if (type === uint8 || type === int8) return 1;
   if (type === uint16 || type === int16) return 2;
   if (type === uint24 || type === int24) return 3;
-  // Impossible as advertisements are much smaller;
   return 255;
 }
 
@@ -233,16 +233,13 @@ const BTHomeDecoder = {
     return res;
   },
 
-  // Unpacks the service data buffer from a Shelly BLU device
   unpack: function (buffer) {
-    // Beacons might not provide BTH service data
     if (typeof buffer !== "string" || buffer.length === 0) return null;
     let result = {};
     let _dib = buffer.at(0);
     result["encryption"] = _dib & 0x1 ? true : false;
     result["BTHome_version"] = _dib >> 5;
     if (result["BTHome_version"] !== 2) return null;
-    //can not handle encrypted data
     if (result["encryption"]) return result;
     buffer = buffer.slice(1);
 
@@ -280,17 +277,13 @@ const BTHomeDecoder = {
   },
 };
 
-// Saving the id of the last packet, this is used to filter the duplicated packets
 let lastPacketId = 0x100;
 
-// Callback for the BLE scanner object
 function BLEScanCallback(event, result) {
-  // Exit if not a result of a scan
   if (event !== BLE.Scanner.SCAN_RESULT) {
     return;
   }
 
-  // Exit if service_data member is missing
   if (typeof result.service_data === "undefined" ||
       typeof result.service_data[BTHOME_SVC_ID_STR] === "undefined") {
     return;
@@ -298,7 +291,6 @@ function BLEScanCallback(event, result) {
 
   let unpackedData = BTHomeDecoder.unpack(result.service_data[BTHOME_SVC_ID_STR]);
 
-  // Exit if unpacked data is null or the device is encrypted
   if (unpackedData === null ||
       typeof unpackedData === "undefined" ||
       unpackedData["encryption"]) {
@@ -306,19 +298,16 @@ function BLEScanCallback(event, result) {
     return;
   }
 
-  // Exit if the event is duplicated
   if (lastPacketId === unpackedData.pid) {
     return;
   }
 
   lastPacketId = unpackedData.pid;
-
   unpackedData.address = result.addr;
 
   checkBlu(unpackedData);
 }
 
-// FIX: Automatische Aktivierung von BLE für Firmware 2.x
 function initBLE() {
   const BLEConfig = Shelly.getComponentConfig("ble");
 
