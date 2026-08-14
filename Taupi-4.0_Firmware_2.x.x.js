@@ -24,7 +24,7 @@ var mindesttemperatur  = 10;                 // [°C] ...und Tinnen > mindesttem
 var mindesthumi        = 50;                 // [%]  ...und RHinnen > mindesthumi
 var schaltzeit         = 180;                // [s]  Schaltbedingung prüfen alle X Sekunden
 var battery_warngrenze = 20;                 // [%] wenn dieser Schwellwert unterschritten ist blinkt der Plug rot
-var lost_connection    = 600;               // [s] Zeit (30 Min) nach der frische Sensordaten gekommen sein müssen um tote Verbindungen zu finden
+var lost_connection    = 1800;               // [s] Zeit (30 Min) nach der frische Sensordaten gekommen sein müssen um tote Verbindungen zu finden
 var auto_reboot_tage   = 7;                  // [Tage] Automatischer Neustart zur Speicherbereinigung
 //===== Ende Sensor-Konfiguration === AB HIER MUSS NICHTS MEHR GEÄNDERT WERDEN =====================================
 
@@ -139,12 +139,20 @@ Timer.set(schaltzeit * 1000, true, function () {
   print("Innen: T =", temperatur_innen, "°C, RH =", humidity_innen, "%, Tp =", taupunkt_innen, "Batterie: ", battery_innen, " % ");
   print("Außen: T =", temperatur_aussen, "°C, RH =", humidity_aussen, "%, Tp =", taupunkt_aussen, "Batterie: ", battery_aussen, " % ");
   
-  // Auto-Reboot Prüfung
+  // Auto-Reboot Prüfung & Anzeige
   var sysStatus = Shelly.getComponentStatus("sys");
-  if (sysStatus && sysStatus.uptime > reboot_limit) {
-    print("Uptime von ", auto_reboot_tage, " Tagen erreicht. Führe automatischen Neustart durch...");
-    Shelly.call("Shelly.Reboot");
-    return;
+  if (sysStatus && typeof sysStatus.uptime !== "undefined") {
+    var restSek = reboot_limit - sysStatus.uptime;
+    if (restSek <= 0) {
+      print("Uptime von ", auto_reboot_tage, " Tagen erreicht. Führe automatischen Neustart durch...");
+      Shelly.call("Shelly.Reboot");
+      return;
+    } else {
+      var restStunden = Math.floor(restSek / 3600);
+      var restTage = Math.floor(restStunden / 24);
+      var restStundenRest = restStunden % 24;
+      print("Zeit bis Reboot:", restTage, "Tage,", restStundenRest, "Std");
+    }
   }
 
   schalten();
