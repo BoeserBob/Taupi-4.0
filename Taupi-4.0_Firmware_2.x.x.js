@@ -10,6 +10,7 @@
 //   - Eine Timerschleife überprüft regelmäßig, ob alle Einschaltbedingungen fuer den Lüfter erfüllt sind:
 //         - Wenn der Taupunkt innen größer als der Taupunkt außen + einem Schwellwert ist wird der Lüfter eingeschaltet, sonst ausgeschaltet.
 //         - Wenn die Innentermperatur unter 10 °C und die Innenraumfeuchte unter 50 % ist wird der Lüfer ausgeschaltet.
+//         - Wenn die Außentemperatur unter mindesttemperatur_aussen oder über maximaltemperatur_aussen liegt, bleibt der Lüfter ausgeschaltet.
 // 
 // Die nachfolgenden Zeilen müssen angepasst werden, mindestens die MAC-Adressen für "sensor_aussen" und "sensor_innen".
 // Die Schaltkonfiguration kann bei Bedarf angepasst werden.
@@ -19,13 +20,15 @@
 var sensor_aussen = "7c:c6:b6:61:e8:11";
 var sensor_innen  = "7c:c6:b6:57:99:45";
 //========== Schalt-Konfiguration ==========
-var taupunktschwelle   = 2;                  // [°C] Lüfter einschalten wenn TPinnen > (TPaussen + taupunktschwelle)...
-var mindesttemperatur  = 10;                 // [°C] ...und Tinnen > mindesttemperatur...
-var mindesthumi        = 50;                 // [%]  ...und RHinnen > mindesthumi
-var schaltzeit         = 180;                // [s]  Schaltbedingung prüfen alle X Sekunden
-var battery_warngrenze = 20;                 // [%] wenn dieser Schwellwert unterschritten ist blinkt der Plug rot
-var lost_connection    = 1800;               // [s] Zeit (30 Min) nach der frische Sensordaten gekommen sein müssen um tote Verbindungen zu finden
-var auto_reboot_tage   = 7;                  // [Tage] Automatischer Neustart zur Speicherbereinigung
+var taupunktschwelle         = 2;     // [°C] Lüfter einschalten wenn TPinnen > (TPaussen + taupunktschwelle)...
+var mindesttemperatur        = 10;    // [°C] ...und Tinnen > mindesttemperatur...
+var mindesthumi              = 50;    // [%]  ...und RHinnen > mindesthumi
+var mindesttemperatur_aussen = -10;   // [°C] Keim Lüften bei extremer Kälte/Frost unter dieser Außentemperatur
+var maximaltemperatur_aussen = 25;    // [°C] Kein Lüften bei Hitze über dieser Außentemperatur
+var schaltzeit               = 180;   // [s]  Schaltbedingung prüfen alle X Sekunden
+var battery_warngrenze       = 20;    // [%]  wenn dieser Schwellwert unterschritten ist blinkt der Plug rot
+var lost_connection          = 1800;  // [s]  Zeit (30 Min) nach der frische Sensordaten gekommen sein müssen um tote Verbindungen zu finden
+var auto_reboot_tage         = 7;     // [Tage] Automatischer Neustart zur Speicherbereinigung
 //===== Ende Sensor-Konfiguration === AB HIER MUSS NICHTS MEHR GEÄNDERT WERDEN =====================================
 
 var reboot_limit = auto_reboot_tage * 24 * 60 * 60; // Umrechnung in Sekunden
@@ -59,6 +62,7 @@ function schalten() {
   if (typeof taupunkt_innen === "undefined" ||
       typeof taupunkt_aussen === "undefined" ||
       typeof temperatur_innen === "undefined" ||
+      typeof temperatur_aussen === "undefined" ||
       typeof humidity_innen === "undefined")
   {
     print("Nicht alle Sensorwerte vorhanden – Schaltung übersprungen.");
@@ -87,10 +91,12 @@ function schalten() {
     print("WARNUNG: Batteriestand eines Sensors niedrig!");
   }
 
-  // Schaltlogik
+  // Schaltlogik (inklusive Grenzen für Außentemperatur)
   if (temperatur_innen > mindesttemperatur &&
       humidity_innen > mindesthumi &&
-      taupunkt_innen > taupunkt_aussen + taupunktschwelle)
+      taupunkt_innen > taupunkt_aussen + taupunktschwelle &&
+      temperatur_aussen >= mindesttemperatur_aussen &&
+      temperatur_aussen <= maximaltemperatur_aussen)
   {
     print("Lüfter einschalten");
     Shelly.call("Switch.Set", { id: 0, on: true });
