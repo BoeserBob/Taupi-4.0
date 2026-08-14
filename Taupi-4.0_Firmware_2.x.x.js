@@ -17,8 +17,8 @@
 //
 
 //========== Sensor-Konfiguration ==========
-var sensor_aussen = "7c:c6:b6:61:e8:11";
-var sensor_innen  = "7c:c6:b6:57:99:45";
+var sensor_aussen = "xx:xx:xx:xx:xx:xx";
+var sensor_innen  = "xx:xx:xx:xx:xx:xx";
 //========== Schalt-Konfiguration ==========
 var taupunktschwelle         = 2;     // [°C] Lüfter einschalten wenn TPinnen > (TPaussen + taupunktschwelle)...
 var mindesttemperatur        = 10;    // [°C] ...und Tinnen > mindesttemperatur...
