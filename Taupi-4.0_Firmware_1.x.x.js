@@ -15,21 +15,20 @@
 // Die Schaltkonfiguration kann bei Bedarf angepasst werden.
 //
 
-
 //========== Sensor-Konfiguration ==========
-var sensor_aussen = "7c:c6:b6:23:05:70";
-var sensor_innen  = "7c:c6:b6:22:d8:aa";
+var sensor_aussen = "xx:xx:xx:xx:xx:xx";
+var sensor_innen  = "xx:xx:xx:xx:xx:xx";
 
 //========== Schalt-Konfiguration ==========
 var taupunktschwelle         = 2;     // [°C] Lüfter einschalten wenn TPinnen > (TPaussen + taupunktschwelle)...
 var mindesttemperatur        = 10;    // [°C] ...und Tinnen > mindesttemperatur...
 var mindesthumi              = 50;    // [%]  ...und RHinnen > mindesthumi
-var mindesttemperatur_aussen = -10;   // [°C] NEU: Kein Lüften bei extremer Kälte unter dieser Außentemperatur
-var maximaltemperatur_aussen = 10;    // [°C] NEU: Kein Lüften bei Temperatur über dieser Außentemperatur
+var mindesttemperatur_aussen = -10;   // [°C] Kein Lüften bei extremer Kälte unter dieser Außentemperatur
+var maximaltemperatur_aussen = 10;    // [°C] Kein Lüften bei Temperatur über dieser Außentemperatur
 var schaltzeit               = 12;    // [s]  Schaltbedingung prüfen alle X Sekunden
 var battery_warngrenze       = 20;    // [%]  wenn dieser Schwellwert unterschritten ist blinkt der Plug rot
 var lost_connection          = 600;   // [s]  Zeit nach der frische Sensordaten gekommen sein müssen um tote Verbindungen zu finden
-var auto_reboot_tage         = 7;     // [Tage] NEU: Automatischer Neustart zur Speicherbereinigung
+var auto_reboot_tage         = 7;     // [Tage] Automatischer Neustart zur Speicherbereinigung
 //===== Ende Sensor-Konfiguration === AB HIER MUSS NICHTS MEHR GEÄNDERT WERDEN =====================================
 
 var reboot_limit = auto_reboot_tage * 24 * 60 * 60; // Umrechnung in Sekunden
@@ -43,11 +42,10 @@ var humidity_aussen;
 var battery_innen;
 var battery_aussen;
 
-// STABILITÄT: Zwingend auf 0 initialisieren, sonst entsteht bei der Addition NaN!
 var lost_connection_innen = 0;
 var lost_connection_aussen = 0;
 
-var luefterstatus = null;  // Merkt sich letzten Schaltzustand, um unnötige Schaltvorgänge zu vermeiden
+var luefterstatus = null;  // Merkt sich letzten Schaltzustand
 
 // Taupunktberechnung
 function taupunkt(T, RH) {
@@ -59,14 +57,14 @@ function taupunkt(T, RH) {
 
 // Lüftersteuerung
 function schalten() {
-  // Sicherheitsprüfung: Sind alle benötigten Werte vorhanden? (Inkl. temperatur_aussen für die neuen Grenzen)
+  // Sicherheitsprüfung: Sind alle benötigten Werte vorhanden?
   if (typeof taupunkt_innen === "undefined" ||
       typeof taupunkt_aussen === "undefined" ||
       typeof temperatur_innen === "undefined" ||
       typeof temperatur_aussen === "undefined" ||
       typeof humidity_innen === "undefined")
   {
-    print("Nicht alle Sensorwerte vorhanden – Schaltung übersprungen.");
+    print("Status: Warte auf erste Sensorwerte – KEIN Schalten.");
     farbring(80,80,0,100);
     return;
   }
@@ -74,46 +72,51 @@ function schalten() {
   // Sicherheitsprüfung: kommen regelmäßig frische Daten von den Sensoren?
   lost_connection_innen = lost_connection_innen + schaltzeit;
   lost_connection_aussen = lost_connection_aussen + schaltzeit;
-  print("Letzte Verbindung zum Sensor innen vor ", lost_connection_innen, " Sekunden");
-  print("Letzte Verbindung zum Sensor außen vor ", lost_connection_aussen, " Sekunden");
+  print("Letzte Verbindung - Innen: ", lost_connection_innen, "s | Außen: ", lost_connection_aussen, "s");
   
   if (lost_connection_innen > lost_connection || lost_connection_aussen > lost_connection )
   {
-    print("Verbindung zu Sensoren zu lange verloren, Lüfter ausschalten.");
     if (luefterstatus !== false) {
+      print("Status: Verbindung zu Sensoren zu lange verloren – SCHALTE LÜFTER AUS!");
       Shelly.call("Switch.Set", { id: 0, on: false });  
       farbring(80,80,0,100);
       luefterstatus = false;
+    } else {
+      print("Status: Verbindung verloren – Lüfter BLEIBT AUS (keine Schaltaktion).");
     }
     return;
   }
   
-  // Visualisierung Batteriefüllstand durch roten Blink
+  // Visualisierung Batteriefüllstand
   if (battery_innen < battery_warngrenze || battery_aussen < battery_warngrenze)
   {
-    print("WARNUNG: Batteriestand eines Sensors niedrig");
+    print("WARNUNG: Batteriestand eines Sensors niedrig!");
     farbring(100,0,0,100);
   }
 
-  // Schaltlogik (inkl. der neuen Außen-Temperaturgrenzen)
+  // Schaltlogik
   if ( temperatur_innen > mindesttemperatur &&
        humidity_innen > mindesthumi &&
        taupunkt_innen > taupunkt_aussen + taupunktschwelle &&
        temperatur_aussen >= mindesttemperatur_aussen &&
        temperatur_aussen <= maximaltemperatur_aussen )
   {
-    if (luefterstatus !== true) { // STABILITÄT: Schaltet nur, wenn noch nicht eingeschaltet
-      print(">>> Lüfter einschalten");
+    if (luefterstatus !== true) {
+      print("Status: Lüftungsbedingungen ERFÜLLT – SCHALTE LÜFTER EIN!");
       Shelly.call("Switch.Set", { id: 0, on: true });
       farbring(80,10,0,100);
       luefterstatus = true;
+    } else {
+      print("Status: Lüftungsbedingungen ERFÜLLT – Lüfter BLEIBT AN (keine Schaltaktion).");
     }
   } else {
-    if (luefterstatus !== false) { // STABILITÄT: Schaltet nur, wenn noch nicht ausgeschaltet
-      print(">>> Lüfter ausschalten.");
+    if (luefterstatus !== false) {
+      print("Status: Lüftungsbedingungen NICHT ERFÜLLT – SCHALTE LÜFTER AUS!");
       Shelly.call("Switch.Set", { id: 0, on: false });
       farbring(0,0,80,100); 
       luefterstatus = false;
+    } else {
+      print("Status: Lüftungsbedingungen NICHT ERFÜLLT – Lüfter BLEIBT AUS (keine Schaltaktion).");
     }
   }
 }
@@ -153,7 +156,7 @@ function checkBlu(event) {
 Timer.set(schaltzeit * 1000, true, function () {
   print("----- Steuerung alle", schaltzeit, "s -----");
   
-  // Auto-Reboot Check (NEU)
+  // Auto-Reboot Check
   var sysStatus = Shelly.getComponentStatus("sys");
   if (sysStatus && typeof sysStatus.uptime !== "undefined") {
     var restSek = reboot_limit - sysStatus.uptime;
