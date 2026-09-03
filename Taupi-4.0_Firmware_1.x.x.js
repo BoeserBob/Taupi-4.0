@@ -1,6 +1,7 @@
 ////////////// TAUPI 4.0 @ Shelly //////////////
 // copyright by boeserbob und holzachr
 // Fragen an quirb@web.de
+// Boost Software License - Version 1.0 - August 17th, 2003
 // Dokumentation und aktuelle Versionen unter https://github.com/BoeserBob/Taupi-4.0
 //
 // Dieses Skript verwandelt z.B. eine Shelly Plug in eine Taupunktlüftersteuerung. 
