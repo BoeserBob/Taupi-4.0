@@ -1,4 +1,5 @@
 ////////////// TAUPI 4.0 @ Shelly //////////////
+// Version für Firmware 2.x.x 
 // copyright by boeserbob und holzachr
 // Fragen an quirb@web.de
 // Boost Software License - Version 1.0 - August 17th, 2003
