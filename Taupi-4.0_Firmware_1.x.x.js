@@ -1,19 +1,19 @@
 ////////////// TAUPI 4.0 @ Shelly //////////////
-// Version für Firmware <= 1.7.5
+// Version fuer Firmware <= 1.7.5
 // copyright by boeserbob und holzachr
 // Fragen an quirb@web.de
 // Boost Software License - Version 1.0 - August 17th, 2003
 // Dokumentation und aktuelle Versionen unter https://github.com/BoeserBob/Taupi-4.0
 //
-// Dieses Skript verwandelt z.B. eine Shelly Plug in eine Taupunktlüftersteuerung. 
-// Der Skript schaltet einen angeschlossenen Lüfter über den Schalter des Shellys auf dem er installiert ist entsprechend der Taupunktunterschiede innen - außen.
+// Dieses Skript verwandelt z.B. eine Shelly Plug in eine Taupunktlueftersteuerung. 
+// Der Skript schaltet einen angeschlossenen Luefter ueber den Schalter des Shellys auf dem er installiert ist entsprechend der Taupunktunterschiede innen - außen.
 //   - Es empfängt Messwert-Events von BLE-Sensoren auf.
 //   - Wenn die Messwerte von den angegebenen Innen- und Außen-Sensoren stammen, werden aus Temperatur und Luftfeuchte die jeweiligen Taupunkte berechnet.
-//   - Eine Timerschleife überprüft regelmäßig, ob alle Einschaltbedingungen fuer den Lüfter erfüllt sind:
-//         - Wenn der Taupunkt innen größer als der Taupunkt außen + einem Schwellwert ist wird der Lüfter eingeschaltet, sonst ausgeschaltet.
-//         - Wenn die Innentermperatur unter 10 °C und die Innenraumfeuchte unter 50 % ist wird der Lüfer ausgeschaltet.
+//   - Eine Timerschleife ueberprueft regelmäßig, ob alle Einschaltbedingungen fuer den Luefter erfuellt sind:
+//         - Wenn der Taupunkt innen größer als der Taupunkt außen + einem Schwellwert ist wird der Luefter eingeschaltet, sonst ausgeschaltet.
+//         - Wenn die Innentermperatur unter 10 °C und die Innenraumfeuchte unter 50 % ist wird der Luefer ausgeschaltet.
 // 
-// Die nachfolgenden Zeilen müssen angepasst werden, mindestens die MAC-Adressen für "sensor_aussen" und "sensor_innen".
+// Die nachfolgenden Zeilen muessen angepasst werden, mindestens die MAC-Adressen fuer "sensor_aussen" und "sensor_innen".
 // Die Schaltkonfiguration kann bei Bedarf angepasst werden.
 //
 
@@ -22,14 +22,14 @@ var sensor_aussen = "xx:xx:xx:xx:xx:xx";
 var sensor_innen  = "xx:xx:xx:xx:xx:xx";
 
 //========== Schalt-Konfiguration ==========
-var taupunktschwelle         = 2;     // [°C] Lüfter einschalten wenn TPinnen > (TPaussen + taupunktschwelle)...
+var taupunktschwelle         = 2;     // [°C] Luefter einschalten wenn TPinnen > (TPaussen + taupunktschwelle)...
 var mindesttemperatur        = 10;    // [°C] ...und Tinnen > mindesttemperatur...
 var mindesthumi              = 50;    // [%]  ...und RHinnen > mindesthumi
-var mindesttemperatur_aussen = -10;   // [°C] Kein Lüften bei extremer Kälte unter dieser Außentemperatur
-var maximaltemperatur_aussen = 10;    // [°C] Kein Lüften bei Temperatur über dieser Außentemperatur
-var schaltzeit               = 12;    // [s]  Schaltbedingung prüfen alle X Sekunden
+var mindesttemperatur_aussen = -10;   // [°C] Kein Lueften bei extremer Kälte unter dieser Außentemperatur
+var maximaltemperatur_aussen = 10;    // [°C] Kein Lueften bei Temperatur ueber dieser Außentemperatur
+var schaltzeit               = 12;    // [s]  Schaltbedingung pruefen alle X Sekunden
 var battery_warngrenze       = 20;    // [%]  wenn dieser Schwellwert unterschritten ist blinkt der Plug rot
-var lost_connection          = 600;   // [s]  Zeit nach der frische Sensordaten gekommen sein müssen um tote Verbindungen zu finden
+var lost_connection          = 600;   // [s]  Zeit nach der frische Sensordaten gekommen sein muessen um tote Verbindungen zu finden
 var auto_reboot_tage         = 7;     // [Tage] Automatischer Neustart zur Speicherbereinigung
 //===== Ende Sensor-Konfiguration === AB HIER MUSS NICHTS MEHR GEÄNDERT WERDEN =====================================
 
@@ -57,9 +57,9 @@ function taupunkt(T, RH) {
   return (b * alpha) / (a - alpha);
 }
 
-// Lüftersteuerung
+// Lueftersteuerung
 function schalten() {
-  // Sicherheitsprüfung: Sind alle benötigten Werte vorhanden?
+  // Sicherheitspruefung: Sind alle benötigten Werte vorhanden?
   if (typeof taupunkt_innen === "undefined" ||
       typeof taupunkt_aussen === "undefined" ||
       typeof temperatur_innen === "undefined" ||
@@ -71,7 +71,7 @@ function schalten() {
     return;
   }
 
-  // Sicherheitsprüfung: kommen regelmäßig frische Daten von den Sensoren?
+  // Sicherheitspruefung: kommen regelmäßig frische Daten von den Sensoren?
   lost_connection_innen = lost_connection_innen + schaltzeit;
   lost_connection_aussen = lost_connection_aussen + schaltzeit;
   print("Letzte Verbindung - Innen: ", lost_connection_innen, "s | Außen: ", lost_connection_aussen, "s");
@@ -79,17 +79,17 @@ function schalten() {
   if (lost_connection_innen > lost_connection || lost_connection_aussen > lost_connection )
   {
     if (luefterstatus !== false) {
-      print("Status: Verbindung zu Sensoren zu lange verloren – SCHALTE LÜFTER AUS!");
+      print("Status: Verbindung zu Sensoren zu lange verloren – SCHALTE LUEFTER AUS!");
       Shelly.call("Switch.Set", { id: 0, on: false });  
       farbring(80,80,0,100);
       luefterstatus = false;
     } else {
-      print("Status: Verbindung verloren – Lüfter BLEIBT AUS (keine Schaltaktion).");
+      print("Status: Verbindung verloren – Luefter BLEIBT AUS (keine Schaltaktion).");
     }
     return;
   }
   
-  // Visualisierung Batteriefüllstand
+  // Visualisierung Batteriefuellstand
   if (battery_innen < battery_warngrenze || battery_aussen < battery_warngrenze)
   {
     print("WARNUNG: Batteriestand eines Sensors niedrig!");
@@ -104,26 +104,26 @@ function schalten() {
        temperatur_aussen <= maximaltemperatur_aussen )
   {
     if (luefterstatus !== true) {
-      print("Status: Lüftungsbedingungen ERFÜLLT – SCHALTE LÜFTER EIN!");
+      print("Status: Lueftungsbedingungen ERFueLLT – SCHALTE LUEFTER EIN!");
       Shelly.call("Switch.Set", { id: 0, on: true });
       farbring(80,10,0,100);
       luefterstatus = true;
     } else {
-      print("Status: Lüftungsbedingungen ERFÜLLT – Lüfter BLEIBT AN (keine Schaltaktion).");
+      print("Status: Lueftungsbedingungen ERFueLLT – Luefter BLEIBT AN (keine Schaltaktion).");
     }
   } else {
     if (luefterstatus !== false) {
-      print("Status: Lüftungsbedingungen NICHT ERFÜLLT – SCHALTE LÜFTER AUS!");
+      print("Status: Lueftungsbedingungen NICHT ERFUELLT – SCHALTE LUEFTER AUS!");
       Shelly.call("Switch.Set", { id: 0, on: false });
       farbring(0,0,80,100); 
       luefterstatus = false;
     } else {
-      print("Status: Lüftungsbedingungen NICHT ERFÜLLT – Lüfter BLEIBT AUS (keine Schaltaktion).");
+      print("Status: Lueftungsbedingungen NICHT ERFUELLT – Luefter BLEIBT AUS (keine Schaltaktion).");
     }
   }
 }
 
-// Farbe Farbring setzen für Standalone Betrieb.
+// Farbe Farbring setzen fuer Standalone Betrieb.
 function farbring(red,green,blue,helligkeit) {
     Shelly.call(
     "PLUGS_UI.SetConfig",{ id:0, config:{"leds":{"mode":"switch","colors":
@@ -143,18 +143,18 @@ function checkBlu(event) {
     taupunkt_aussen   = taupunkt(event.temperature, event.humidity);
     battery_aussen    = event.battery;
     lost_connection_aussen = 0;
-    print("Neue Werte für Außen:", temperatur_aussen, "°C,", humidity_aussen, "%, Tp:", taupunkt_aussen, "°C, Batt:", battery_aussen, "%");
+    print("Neue Werte fuer Außen:", temperatur_aussen, "°C,", humidity_aussen, "%, Tp:", taupunkt_aussen, "°C, Batt:", battery_aussen, "%");
   } else if (event.address === sensor_innen) {
     temperatur_innen = event.temperature;
     humidity_innen   = event.humidity;
     taupunkt_innen   = taupunkt(event.temperature, event.humidity);
     battery_innen    = event.battery;
     lost_connection_innen = 0;
-    print("Neue Werte für Innen:", temperatur_innen, "°C,", humidity_innen, "%, Tp:", taupunkt_innen, "°C, Batt:", battery_innen, "%");
+    print("Neue Werte fuer Innen:", temperatur_innen, "°C,", humidity_innen, "%, Tp:", taupunkt_innen, "°C, Batt:", battery_innen, "%");
   }
 }
 
-// Haupt-Timer für Steuerlogik
+// Haupt-Timer fuer Steuerlogik
 Timer.set(schaltzeit * 1000, true, function () {
   print("----- Steuerung alle", schaltzeit, "s -----");
   
@@ -163,7 +163,7 @@ Timer.set(schaltzeit * 1000, true, function () {
   if (sysStatus && typeof sysStatus.uptime !== "undefined") {
     var restSek = reboot_limit - sysStatus.uptime;
     if (restSek <= 0) {
-      print("!!! Uptime von", auto_reboot_tage, "Tagen erreicht. Führe Neustart durch...");
+      print("!!! Uptime von", auto_reboot_tage, "Tagen erreicht. Fuehre Neustart durch...");
       Shelly.call("Shelly.Reboot");
       return;
     } else {
