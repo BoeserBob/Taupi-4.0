@@ -67,7 +67,7 @@ function schalten() {
       typeof temperatur_aussen === "undefined" ||
       typeof humidity_innen === "undefined")
   {
-    print("Nicht alle Sensorwerte vorhanden – Schaltung uebersprungen.");
+    print("AKTION: Nicht alle Sensorwerte vorhanden – Schaltung uebersprungen.");
     farbring(80,80,0,100);
     return;
   }
@@ -75,36 +75,36 @@ function schalten() {
   // Sicherheitspruefung: Kommen regelmäßig frische Daten von den Sensoren?
   lost_connection_innen = lost_connection_innen + schaltzeit;
   lost_connection_aussen = lost_connection_aussen + schaltzeit;
-  print("letzte Verbindung zum Sensor innen vor ", lost_connection_innen, " Sekunden ");
-  print("letzte Verbindung zum Sensor außen vor ", lost_connection_aussen, " Sekunden ");
-  
+
   if (lost_connection_innen > lost_connection || lost_connection_aussen > lost_connection)
   {
-    print("Verbindung zu Sensoren zu lange verloren, Luefter ausschalten.");
+    print("AKTION: Verbindung zu Sensoren zu lange verloren -> Luefter AUS.");
     Shelly.call("Switch.Set", { id: 0, on: false });  
     farbring(80,80,0,100);
     return;
   }
-  
+
   // Visualisierung Batteriefuellstand
   if ((typeof battery_innen !== "undefined" && battery_innen < battery_warngrenze) ||
       (typeof battery_aussen !== "undefined" && battery_aussen < battery_warngrenze))
   {
-    print("WARNUNG: Batteriestand eines Sensors niedrig!");
+    print("WARNUNG: Batteriestand eines Sensors niedrig! (Innen:", battery_innen, "%, Außen:", battery_aussen, "%)");
   }
+
+  var delta = taupunkt_innen - taupunkt_aussen;
 
   // Schaltlogik (inklusive Grenzen fuer Außentemperatur)
   if (temperatur_innen > mindesttemperatur &&
       humidity_innen > mindesthumi &&
-      taupunkt_innen > taupunkt_aussen + taupunktschwelle &&
+      delta > taupunktschwelle &&
       temperatur_aussen >= mindesttemperatur_aussen &&
       temperatur_aussen <= maximaltemperatur_aussen)
   {
-    print("Luefter einschalten");
+    print("AKTION: [ LÜFTER AN ] | Tp-Innen:", taupunkt_innen.toFixed(2), "°C | Tp-Außen:", taupunkt_aussen.toFixed(2), "°C | Delta:", delta.toFixed(2), "°C");
     Shelly.call("Switch.Set", { id: 0, on: true });
     farbring(80,10,0,100);
   } else {
-    print("Luefter ausschalten.");
+    print("AKTION: [ LÜFTER AUS ] | Tp-Innen:", taupunkt_innen.toFixed(2), "°C | Tp-Außen:", taupunkt_aussen.toFixed(2), "°C | Delta:", delta.toFixed(2), "°C");
     Shelly.call("Switch.Set", { id: 0, on: false });
     farbring(0,0,80,100); 
   }
