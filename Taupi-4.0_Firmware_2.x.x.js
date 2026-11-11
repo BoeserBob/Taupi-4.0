@@ -270,7 +270,7 @@ const BTHomeDecoder = {
     while (buffer.length > 0) {
       _bth = BTH[buffer.at(0)];
       if (typeof _bth === "undefined") {
-        print("BTH: Unknown type");
+        print("BTH: unknown adress");
         break;
       }
       buffer = buffer.slice(1);
