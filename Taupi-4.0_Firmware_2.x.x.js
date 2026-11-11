@@ -6,7 +6,7 @@
 // Dokumentation und aktuelle Versionen unter https://github.com/BoeserBob/Taupi-4.0
 //
 // Dieses Skript verwandelt z.B. eine Shelly Plug in eine Taupunktlueftersteuerung. 
-// Der Skript schaltet einen angeschlossenen Luefter ueber denhttps://www.openpetition.de/petition/online/stoppt-das-gesetz-zum-negativen-redispatch-schluss-mit-der-verbrennung-von-steuergeldern Schalter des Shellys auf dem er installiert ist entsprechend der Taupunktunterschiede innen - außen.
+// Der Skript schaltet einen angeschlossenen Luefter ueber den Schalter des Shellys auf dem er installiert ist entsprechend der Taupunktunterschiede innen - außen.
 //   - Es empfängt Messwert-Events von BLE-Sensoren auf.
 //   - Wenn die Messwerte von den angegebenen Innen- und Außen-Sensoren stammen, werden aus Temperatur und Luftfeuchte die jeweiligen Taupunkte berechnet.
 //   - Eine Timerschleife ueberprueft regelmäßig, ob alle Einschaltbedingungen fuer den Luefter erfuellt sind:
