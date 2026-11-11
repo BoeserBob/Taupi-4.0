@@ -124,21 +124,24 @@ function farbring(red,green,blue,helligkeit) {
 
 // Event-Verarbeitung
 function checkBlu(event) {
+  var rssi_str = (typeof event.rssi !== "undefined") ? event.rssi + " dBm" : "N/A";
+
   if (event.address === sensor_aussen) {
     temperatur_aussen = event.temperature;
     humidity_aussen   = event.humidity;
     taupunkt_aussen   = taupunkt(event.temperature, event.humidity);
     battery_aussen    = event.battery;
     lost_connection_aussen = 0;
-    print("Neue Werte fuer Außen:", temperatur_aussen, "°C,", humidity_aussen, "%, Tp:", taupunkt_aussen, "°C, Batt: ", battery_aussen, " % ");
+    print("Neue Werte fuer Außen:", temperatur_aussen, "°C,", humidity_aussen, "%, Tp:", taupunkt_aussen.toFixed(2), "°C, Batt:", battery_aussen, "%, RSSI:", rssi_str);
   } else if (event.address === sensor_innen) {
     temperatur_innen = event.temperature;
     humidity_innen   = event.humidity;
     taupunkt_innen   = taupunkt(event.temperature, event.humidity);
     battery_innen    = event.battery;
     lost_connection_innen = 0;
-    print("Neue Werte fuer Innen:", temperatur_innen, "°C,", humidity_innen, "%, Tp:", taupunkt_innen, "°C, Batt: " , battery_innen, " % ");
+    print("Neue Werte fuer Innen:", temperatur_innen, "°C,", humidity_innen, "%, Tp:", taupunkt_innen.toFixed(2), "°C, Batt:", battery_innen, "%, RSSI:", rssi_str);
   }
+}
 }
 
 // Haupt-Timer fuer Steuerlogik
@@ -339,7 +342,7 @@ function BLEScanCallback(event, result) {
 
   lastPacketId = unpackedData.pid;
   unpackedData.address = result.addr;
-
+  unpackedData.rssi = result.rssi; // <--- Signalstaerke (RSSI) mitsenden
   checkBlu(unpackedData);
 }
 
