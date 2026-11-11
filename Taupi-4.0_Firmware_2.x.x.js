@@ -142,7 +142,7 @@ function checkBlu(event) {
     print("Neue Werte fuer Innen:", temperatur_innen, "°C,", humidity_innen, "%, Tp:", taupunkt_innen.toFixed(2), "°C, Batt:", battery_innen, "%, RSSI:", rssi_str);
   }
 }
-}
+
 
 // Haupt-Timer fuer Steuerlogik
 Timer.set(schaltzeit * 1000, true, function () {
