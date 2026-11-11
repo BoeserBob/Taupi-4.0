@@ -348,7 +348,7 @@ function startScanner() {
   if (BLE.Scanner.isRunning()) {
     print("Info: BLE Scanner läuft bereits.");
   } else {
-    BLE.Scanner.Start({
+    BLE.Scanner.start({
       duration_ms: BLE.Scanner.INFINITE_SCAN,
       active: false
     });
