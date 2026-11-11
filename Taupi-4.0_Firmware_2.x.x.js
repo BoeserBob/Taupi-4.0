@@ -144,9 +144,20 @@ function checkBlu(event) {
 // Haupt-Timer fuer Steuerlogik
 Timer.set(schaltzeit * 1000, true, function () {
   print("----- Steuerung alle", schaltzeit, "s -----");
-  print("Innen: T =", temperatur_innen, "°C, RH =", humidity_innen, "%, Tp =", taupunkt_innen, "Batterie: ", battery_innen, " % ");
-  print("Außen: T =", temperatur_aussen, "°C, RH =", humidity_aussen, "%, Tp =", taupunkt_aussen, "Batterie: ", battery_aussen, " % ");
   
+  // Taupunktdifferenz berechnen (nur wenn beide Werte vorhanden sind)
+  var delta_tp = (typeof taupunkt_innen !== "undefined" && typeof taupunkt_aussen !== "undefined") 
+                 ? (taupunkt_innen - taupunkt_aussen) 
+                 : null;
+
+  var tp_in_str  = (typeof taupunkt_innen  !== "undefined") ? taupunkt_innen.toFixed(2)  + " °C" : "N/A";
+  var tp_out_str = (typeof taupunkt_aussen !== "undefined") ? taupunkt_aussen.toFixed(2) + " °C" : "N/A";
+  var delta_str  = (delta_tp !== null)                      ? delta_tp.toFixed(2)       + " °C" : "N/A";
+
+  print("Innen: T =", temperatur_innen, "°C, RH =", humidity_innen, "%, Tp =", tp_in_str, "(Batt:", battery_innen, "%)");
+  print("Außen: T =", temperatur_aussen, "°C, RH =", humidity_aussen, "%, Tp =", tp_out_str, "(Batt:", battery_aussen, "%)");
+  print("Taupunktdifferenz (Innen - Außen):", delta_str, "(Schwelle:", taupunktschwelle, "°C)");
+
   // Auto-Reboot Pruefung & Anzeige
   var sysStatus = Shelly.getComponentStatus("sys");
   if (sysStatus && typeof sysStatus.uptime !== "undefined") {
@@ -155,11 +166,6 @@ Timer.set(schaltzeit * 1000, true, function () {
       print("Uptime von ", auto_reboot_tage, " Tagen erreicht. Fuehre automatischen Neustart durch...");
       Shelly.call("Shelly.Reboot");
       return;
-    } else {
-      var restStunden = Math.floor(restSek / 3600);
-      var restTage = Math.floor(restStunden / 24);
-      var restStundenRest = restStunden % 24;
-      print("Zeit bis Reboot:", restTage, "Tage,", restStundenRest, "Std");
     }
   }
 
