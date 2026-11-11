@@ -284,8 +284,7 @@ const BTHomeDecoder = {
     while (buffer.length > 0) {
       _bth = BTH[buffer.at(0)];
       if (typeof _bth === "undefined") {
-        print("BTH: fremdes BT Gerät mit anderer Adresse als meine Sensoren empfangen");
-        break;
+          break;
       }
       buffer = buffer.slice(1);
       _value = this.getBufValue(_bth.t, buffer);
