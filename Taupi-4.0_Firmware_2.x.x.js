@@ -158,16 +158,30 @@ Timer.set(schaltzeit * 1000, true, function () {
   print("Außen: T =", temperatur_aussen, "°C, RH =", humidity_aussen, "%, Tp =", tp_out_str, "(Batt:", battery_aussen, "%)");
   print("Taupunktdifferenz (Innen - Außen):", delta_str, "(Schwelle:", taupunktschwelle, "°C)");
 
-  // Auto-Reboot Pruefung & Anzeige
-  var sysStatus = Shelly.getComponentStatus("sys");
-  if (sysStatus && typeof sysStatus.uptime !== "undefined") {
-    var restSek = reboot_limit - sysStatus.uptime;
-    if (restSek <= 0) {
-      print("Uptime von ", auto_reboot_tage, " Tagen erreicht. Fuehre automatischen Neustart durch...");
-      Shelly.call("Shelly.Reboot");
-      return;
-    }
+ // Auto-Reboot Pruefung & Anzeige
+var sysStatus = Shelly.getComponentStatus("sys");
+if (sysStatus && typeof sysStatus.uptime !== "undefined") {
+  var uptimeSek = sysStatus.uptime;
+  var restSek = reboot_limit - uptimeSek;
+
+  if (restSek <= 0) {
+    print("Uptime von ", auto_reboot_tage, " Tagen erreicht. Fuehre automatischen Neustart durch...");
+    Shelly.call("Shelly.Reboot");
+    return;
   }
+
+  // Aktuelle Laufzeit berechnen (Tage, Stunden, Minuten)
+  var upTage = Math.floor(uptimeSek / 86400);
+  var upStunden = Math.floor((uptimeSek % 86400) / 3600);
+  var upMinuten = Math.floor((uptimeSek % 3600) / 60);
+
+  // Zeit bis zum Reboot berechnen (Tage, Stunden, Minuten)
+  var restTage = Math.floor(restSek / 86400);
+  var restStunden = Math.floor((restSek % 86400) / 3600);
+  var restMinuten = Math.floor((restSek % 3600) / 60);
+
+  print("Laufzeit:", upTage + "d " + upStunden + "h " + upMinuten + "m | Zeit bis Reboot:", restTage + "d " + restStunden + "h " + restMinuten + "m");
+}
 
   schalten();
 });
