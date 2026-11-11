@@ -270,7 +270,7 @@ const BTHomeDecoder = {
     while (buffer.length > 0) {
       _bth = BTH[buffer.at(0)];
       if (typeof _bth === "undefined") {
-        print("BTH: unknown adress");
+        print("BTH: BT Gerät mit anderer Adresse als meine Sensoren empfangen");
         break;
       }
       buffer = buffer.slice(1);
