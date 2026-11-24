@@ -2,6 +2,8 @@
 :-) Vereinfachte Version powered by HolzaChr -> alles in einen Script gepackt und ohne KVS! :-)
 https://github.com/holzachr
 
+Wenn du mich unterstützen willst: https://buymeacoffee.com/boeserbob 
+
 Eine Taupunkt-gesteuerte Zwangsbelüftung mit einem Shelly Plug S Plus als Schaltsteckdose und BLE-Gateway (läuft auch auf einigen anderen Script- und BT fähigen Shelly Schaltkomponenten, einfach probieren), sowie zwei Shelly BLU HT Sensoren.
 
 Vorab noch ein Hinweis: günstige Lüfter sind meist schlecht entstört. Shelly Plugs sind empfindlich gegen diese Überspannungen. 
